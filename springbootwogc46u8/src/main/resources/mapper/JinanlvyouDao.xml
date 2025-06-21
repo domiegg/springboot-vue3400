@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.JinanlvyouDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.entity.JinanlvyouEntity" id="jinanlvyouMap">
+        <result property="title" column="title"/>
+        <result property="picture" column="picture"/>
+        <result property="wandays" column="wandays"/>
+        <result property="brief" column="brief"/>
+        <result property="address" column="address"/>
+        <result property="score" column="score"/>
+        <result property="ranking" column="ranking"/>
+        <result property="renshu" column="renshu"/>
+        <result property="gaishu" column="gaishu"/>
+        <result property="laiyuan" column="laiyuan"/>
+        <result property="ticket" column="ticket"/>
+    </resultMap>
+
+	<select id="selectListVO"
+		resultType="com.entity.vo.JinanlvyouVO" >
+		SELECT * FROM jinanlvyou  jinanlvyou         
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectVO"
+		resultType="com.entity.vo.JinanlvyouVO" >
+		SELECT  jinanlvyou.* FROM jinanlvyou  jinanlvyou 	
+ 		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+    <select id="selectListView"
+		resultType="com.entity.view.JinanlvyouView" >
+
+		SELECT  jinanlvyou.* FROM jinanlvyou  jinanlvyou 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.entity.view.JinanlvyouView" >
+		SELECT * FROM jinanlvyou  jinanlvyou <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+
+    <select id="selectValue" resultType="map" >
+        SELECT ${params.xColumn}, ROUND(sum(${params.yColumn}),1) total FROM jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        group by ${params.xColumn}
+    </select>
+
+    <select id="selectTimeStatValue" resultType="map" >
+        <if test = 'params.timeStatType == "日"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y-%m-%d') ${params.xColumn}, sum(${params.yColumn}) total FROM jinanlvyou
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y-%m-%d')
+        </if>
+        <if test = 'params.timeStatType == "月"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y-%m') ${params.xColumn}, sum(${params.yColumn}) total FROM jinanlvyou
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y-%m')
+        </if>
+        <if test = 'params.timeStatType == "年"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y') ${params.xColumn}, sum(${params.yColumn}) total FROM jinanlvyou
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y')
+        </if>
+    </select>
+
+    <select id="selectGroup" resultType="map" >
+        SELECT ${params.column} , count(1) total FROM jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        group by ${params.column}
+    </select>
+
+    <select id="scoreSectionStat" resultType="map" >
+        SELECT '1分以下' as score,case when t.1分以下 is null then 0 else t.1分以下 end total
+        from
+        (select
+        sum(case when score &lt;= 1 then 1 else 0 end) as 1分以下,        sum(case when score >= 1 and score &lt;= 2 then 1 else 0 end) as 1至2分,        sum(case when score >= 2 and score &lt;= 3 then 1 else 0 end) as 2至3分,        sum(case when score >= 3 and score &lt;= 4 then 1 else 0 end) as 3至4分,        sum(case when score >= 4 then 1 else 0 end) as 4分以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '1至2分' as score,case when t.1至2分 is null then 0 else t.1至2分 end total
+        from
+        (select
+        sum(case when score &lt;= 1 then 1 else 0 end) as 1分以下,        sum(case when score >= 1 and score &lt;= 2 then 1 else 0 end) as 1至2分,        sum(case when score >= 2 and score &lt;= 3 then 1 else 0 end) as 2至3分,        sum(case when score >= 3 and score &lt;= 4 then 1 else 0 end) as 3至4分,        sum(case when score >= 4 then 1 else 0 end) as 4分以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '2至3分' as score,case when t.2至3分 is null then 0 else t.2至3分 end total
+        from
+        (select
+        sum(case when score &lt;= 1 then 1 else 0 end) as 1分以下,        sum(case when score >= 1 and score &lt;= 2 then 1 else 0 end) as 1至2分,        sum(case when score >= 2 and score &lt;= 3 then 1 else 0 end) as 2至3分,        sum(case when score >= 3 and score &lt;= 4 then 1 else 0 end) as 3至4分,        sum(case when score >= 4 then 1 else 0 end) as 4分以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '3至4分' as score,case when t.3至4分 is null then 0 else t.3至4分 end total
+        from
+        (select
+        sum(case when score &lt;= 1 then 1 else 0 end) as 1分以下,        sum(case when score >= 1 and score &lt;= 2 then 1 else 0 end) as 1至2分,        sum(case when score >= 2 and score &lt;= 3 then 1 else 0 end) as 2至3分,        sum(case when score >= 3 and score &lt;= 4 then 1 else 0 end) as 3至4分,        sum(case when score >= 4 then 1 else 0 end) as 4分以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '4分以上' as score,case when t.4分以上 is null then 0 else t.4分以上 end total
+        from
+        (select
+        sum(case when score &lt;= 1 then 1 else 0 end) as 1分以下,        sum(case when score >= 1 and score &lt;= 2 then 1 else 0 end) as 1至2分,        sum(case when score >= 2 and score &lt;= 3 then 1 else 0 end) as 2至3分,        sum(case when score >= 3 and score &lt;= 4 then 1 else 0 end) as 3至4分,        sum(case when score >= 4 then 1 else 0 end) as 4分以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+    </select>
+    <select id="renshuSectionStat" resultType="map" >
+        SELECT '2800以内' as renshu,case when t.2800以内 is null then 0 else t.2800以内 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '2800至4600' as renshu,case when t.2800至4600 is null then 0 else t.2800至4600 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '4600至6400' as renshu,case when t.4600至6400 is null then 0 else t.4600至6400 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '6400至8200' as renshu,case when t.6400至8200 is null then 0 else t.6400至8200 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '8200至10000' as renshu,case when t.8200至10000 is null then 0 else t.8200至10000 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '10000以上' as renshu,case when t.10000以上 is null then 0 else t.10000以上 end total
+        from
+        (select
+        sum(case when renshu &lt;= 2800 then 1 else 0 end) as 2800以内,        sum(case when renshu >= 2800 and renshu &lt;= 4600 then 1 else 0 end) as 2800至4600,        sum(case when renshu >= 4600 and renshu &lt;= 6400 then 1 else 0 end) as 4600至6400,        sum(case when renshu >= 6400 and renshu &lt;= 8200 then 1 else 0 end) as 6400至8200,        sum(case when renshu >= 8200 and renshu &lt;= 10000 then 1 else 0 end) as 8200至10000,        sum(case when renshu >= 10000 then 1 else 0 end) as 10000以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+    </select>
+    <select id="ticketSectionStat" resultType="map" >
+        SELECT '30以内' as ticket,case when t.30以内 is null then 0 else t.30以内 end total
+        from
+        (select
+        sum(case when ticket &lt;= 30 then 1 else 0 end) as 30以内,        sum(case when ticket >= 30 and ticket &lt;= 60 then 1 else 0 end) as 30至60,        sum(case when ticket >= 60 and ticket &lt;= 90 then 1 else 0 end) as 60至90,        sum(case when ticket >= 90 and ticket &lt;= 120 then 1 else 0 end) as 90至120,        sum(case when ticket >= 120 then 1 else 0 end) as 120以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '30至60' as ticket,case when t.30至60 is null then 0 else t.30至60 end total
+        from
+        (select
+        sum(case when ticket &lt;= 30 then 1 else 0 end) as 30以内,        sum(case when ticket >= 30 and ticket &lt;= 60 then 1 else 0 end) as 30至60,        sum(case when ticket >= 60 and ticket &lt;= 90 then 1 else 0 end) as 60至90,        sum(case when ticket >= 90 and ticket &lt;= 120 then 1 else 0 end) as 90至120,        sum(case when ticket >= 120 then 1 else 0 end) as 120以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '60至90' as ticket,case when t.60至90 is null then 0 else t.60至90 end total
+        from
+        (select
+        sum(case when ticket &lt;= 30 then 1 else 0 end) as 30以内,        sum(case when ticket >= 30 and ticket &lt;= 60 then 1 else 0 end) as 30至60,        sum(case when ticket >= 60 and ticket &lt;= 90 then 1 else 0 end) as 60至90,        sum(case when ticket >= 90 and ticket &lt;= 120 then 1 else 0 end) as 90至120,        sum(case when ticket >= 120 then 1 else 0 end) as 120以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '90至120' as ticket,case when t.90至120 is null then 0 else t.90至120 end total
+        from
+        (select
+        sum(case when ticket &lt;= 30 then 1 else 0 end) as 30以内,        sum(case when ticket >= 30 and ticket &lt;= 60 then 1 else 0 end) as 30至60,        sum(case when ticket >= 60 and ticket &lt;= 90 then 1 else 0 end) as 60至90,        sum(case when ticket >= 90 and ticket &lt;= 120 then 1 else 0 end) as 90至120,        sum(case when ticket >= 120 then 1 else 0 end) as 120以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+        union all
+        SELECT '120以上' as ticket,case when t.120以上 is null then 0 else t.120以上 end total
+        from
+        (select
+        sum(case when ticket &lt;= 30 then 1 else 0 end) as 30以内,        sum(case when ticket >= 30 and ticket &lt;= 60 then 1 else 0 end) as 30至60,        sum(case when ticket >= 60 and ticket &lt;= 90 then 1 else 0 end) as 60至90,        sum(case when ticket >= 90 and ticket &lt;= 120 then 1 else 0 end) as 90至120,        sum(case when ticket >= 120 then 1 else 0 end) as 120以上        from jinanlvyou
+        <where> 1=1 ${ew.sqlSegment}</where>
+        ) t
+    </select>
+
+
+
+</mapper>
